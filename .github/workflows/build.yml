@@ -43,6 +43,7 @@ jobs:
       with:
         name: release_url
         path: release_url.txt
+
     - name: Get Release File Name & Upload URL
       if: startsWith(github.event.ref, 'refs/tags/')
       id: get_release_info
@@ -73,9 +74,18 @@ jobs:
           ls
           echo ${{steps.vars.outputs.tag }}
           echo ${{ steps.get_release_info.outputs.upload_url }}
-          
+
+      - name: Load Release URL File from release job
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: actions/download-artifact@v1
+        with:
+          name: release_url
+      
+      - name: Show dir ls
+        run: ls
+
       - name: Upload Release AppImage
-        # if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/')
         id: upload-release-asset-AppImage
         uses: actions/upload-release-asset@v1.0.1
         env:
