@@ -60,8 +60,8 @@ jobs:
       - name: Build
         run: |
           mkdir dist
+          cd dist
           touch 1.txt
-          touch ${{steps.vars.outputs.tag}}.txt
           ls
           echo ${{steps.vars.outputs.tag }}
           echo ${{ steps.get_release_info.outputs.upload_url }}
@@ -81,7 +81,10 @@ jobs:
           echo ::set-output name=upload_url::$value
 
       - name: Show dir ls
-        run: ls
+        run: |
+          ls
+          echo ${{steps.vars.outputs.tag }}
+          echo ${GITHUB_REF:11}
 
       - name: Upload Release AppImage
         if: startsWith(github.event.ref, 'refs/tags/')
