@@ -70,8 +70,9 @@ jobs:
           mkdir dist
           touch 1.txt
           touch ${{steps.vars.outputs.tag}}.txt
-
-      
+          ls
+          echo ${{steps.vars.outputs.tag }}
+          echo ${{ steps.get_release_info.outputs.upload_url }}
           
       - name: Upload Release AppImage
         # if: startsWith(github.event.ref, 'refs/tags/')
@@ -83,5 +84,5 @@ jobs:
           upload_url: ${{ steps.get_release_info.outputs.upload_url }}
           asset_path: ./dist/1.txt
           asset_name: 1.txt
-          asset_content_type: application/AppImage
+          asset_content_type: application/txt
       
