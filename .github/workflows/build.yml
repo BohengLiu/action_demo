@@ -4,9 +4,9 @@ on:
   push:
     tag:
       - v*
-  pull_request:
-    branches:
-      - master
+  # pull_request:
+  #   branches:
+  #     - master
 
 jobs:
   try_create_release:
