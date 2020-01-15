@@ -49,7 +49,7 @@ jobs:
       shell: bash
       run: |
         ls
-        value=`release_url.txt`
+        value=`cat release_url.txt`
         echo ::set-output name=upload_url::$value
 
   ubuntu:
