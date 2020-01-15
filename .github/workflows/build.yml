@@ -21,6 +21,7 @@ jobs:
       run: |
         echo ${{steps.vars.outputs.tag }}
         echo ${{github.event.ref}}
+
     - name: Create Release
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
@@ -32,11 +33,12 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
+
     - name: Output Release URL File
-      # if: startsWith(github.event.ref, 'refs/tags/')
-      run: echo "${{ steps.create_release.outputs.upload_url }}"
+      if: startsWith(github.event.ref, 'refs/tags/')
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
     - name: Save Release URL File for publish
-      # if: startsWith(github.event.ref, 'refs/tags/')
+      if: startsWith(github.event.ref, 'refs/tags/')
       uses: actions/upload-artifact@v1
       with:
         name: release_url
@@ -59,6 +61,7 @@ jobs:
         run: |
           mkdir dist
           touch 1.txt
+          touch ${{steps.vars.outputs.tag}}.txt
 
 
       - name: Upload Release AppImage
