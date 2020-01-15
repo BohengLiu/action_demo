@@ -43,6 +43,8 @@ jobs:
       with:
         name: release_url
         path: release_url.txt
+    - name: Show dir
+      run: ls
 
   ubuntu:
     name: Build on Ubuntu
@@ -68,6 +70,7 @@ jobs:
         id: get_release_info
         shell: bash
         run: |
+          ls
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
           
