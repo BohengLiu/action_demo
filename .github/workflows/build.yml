@@ -18,7 +18,9 @@ jobs:
       run: echo ::set-output name=tag::$(echo ${GITHUB_REF})
     
     - name: Show github ref
-      run: echo ${{steps.vars.outputs.tag }}
+      run: |
+        echo ${{steps.vars.outputs.tag }}
+        echo ${{github.event.ref}}
     - name: Create Release
       # if: startsWith(github.event.ref, 'refs/tags/')
       id: create_release
@@ -26,7 +28,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }} x123456
+        tag_name: ${{ github.ref }} x123456789
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
