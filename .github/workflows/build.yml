@@ -5,7 +5,7 @@ on:
     tag:
       - v*
   pull_request:
-    brancher:
+    branches:
       - master
 
 jobs:
@@ -15,20 +15,20 @@ jobs:
     steps:
     - name: Set output
       id: vars
-      run: echo ::set-output name=tag::$(echo ${GITHUB_REF})
+      run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
     
     - name: Show github ref
       run: |
         echo ${{steps.vars.outputs.tag }}
         echo ${{github.event.ref}}
     - name: Create Release
-      # if: startsWith(github.event.ref, 'refs/tags/')
+      if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
       uses: actions/create-release@v1.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }} x123456789
+        tag_name: ${{ github.ref }} x1234567891
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
