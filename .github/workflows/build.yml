@@ -44,13 +44,13 @@ jobs:
         name: release_url
         path: release_url.txt
     - name: Get Release File Name & Upload URL
-        if: startsWith(github.event.ref, 'refs/tags/')
-        id: get_release_info
-        shell: bash
-        run: |
-          ls
-          value=`release_url.txt`
-          echo ::set-output name=upload_url::$value
+      if: startsWith(github.event.ref, 'refs/tags/')
+      id: get_release_info
+      shell: bash
+      run: |
+        ls
+        value=`release_url.txt`
+        echo ::set-output name=upload_url::$value
 
   ubuntu:
     name: Build on Ubuntu
