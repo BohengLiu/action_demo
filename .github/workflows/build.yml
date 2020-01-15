@@ -43,8 +43,14 @@ jobs:
       with:
         name: release_url
         path: release_url.txt
-    - name: Show dir
-      run: ls
+    - name: Get Release File Name & Upload URL
+        if: startsWith(github.event.ref, 'refs/tags/')
+        id: get_release_info
+        shell: bash
+        run: |
+          ls
+          value=`release_url.txt`
+          echo ::set-output name=upload_url::$value
 
   ubuntu:
     name: Build on Ubuntu
@@ -65,14 +71,7 @@ jobs:
           touch 1.txt
           touch ${{steps.vars.outputs.tag}}.txt
 
-      - name: Get Release File Name & Upload URL
-        if: startsWith(github.event.ref, 'refs/tags/')
-        id: get_release_info
-        shell: bash
-        run: |
-          ls
-          value=`cat release_url/release_url.txt`
-          echo ::set-output name=upload_url::$value
+      
           
       - name: Upload Release AppImage
         # if: startsWith(github.event.ref, 'refs/tags/')
