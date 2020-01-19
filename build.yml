@@ -1,0 +1,127 @@
+name: Build/release
+
+on: 
+  release:
+    types: [published]
+
+jobs:
+  ubuntu:
+    name: Build on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
+
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn release:linux
+
+      - name: Upload to release AppImage
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: ./dist/Dipperin-Wallet-linux-${{steps.vars.outputs.tag}}.AppImage application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to release linux zip
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: ./dist/Dipperin-Wallet-linux-${{steps.vars.outputs.tag}}.deb application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  window:
+    name: Build on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
+        shell: bash
+
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn release:win
+
+      - name: Upload Release exe
+        if: startsWith(github.ref, 'refs/tags/')
+        id: upload-release-asset-exe
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/Dipperin-Wallet-win-${{ steps.vars.outputs.tag }}.exe
+          asset_name: Dipperin-Wallet-win-${{ steps.vars.outputs.tag }}.exe
+          asset_content_type: application/exe
+
+      - name: Upload Release zip
+        if: startsWith(github.ref, 'refs/tags/')
+        id: upload-release-asset-zip
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/Dipperin-Wallet-win-${{ steps.vars.outputs.tag }}.zip
+          asset_name: Dipperin-Wallet-win-${{ steps.vars.outputs.tag }}.zip
+          asset_content_type: application/zip
+
+  macos:
+    name: Build on MacOS
+    runs-on: macos-latest
+    steps:
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
+
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn release:mac
+
+      - name: dir
+        run: ls ./dist
+
+      - name: Upload Release zip
+        if: startsWith(github.ref, 'refs/tags/')
+        id: upload-release-asset-mac-zip
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/Dipperin-Wallet-mac-${{ steps.vars.outputs.tag }}.zip
+          asset_name: Dipperin-Wallet-mac-${{ steps.vars.outputs.tag }}.zip
+          asset_content_type: application/zip
+
